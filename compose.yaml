@@ -1,0 +1,17 @@
+services:
+
+  # development container to server next.js (+ static assets)
+  # in production nginx will be installed on host
+  web:
+    image: nginx:latest
+    volumes:
+     - ./nginx:/etc/nginx
+     - ./rnu/dist:/usr/share/nginx/html
+    ports:
+     - "80:80"
+     - "443:443"
+
+
+# How to copy /etc/nginx directory to mount it in volumes on host:
+# docker run -d --name temp_nginx nginx:latest
+# docker cp temp_nginx:/etc/nginx ./nginx-config
