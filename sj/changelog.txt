@@ -1,0 +1,2 @@
+bun create solid
+bun install vite
