@@ -7,7 +7,7 @@ async fn main() -> std::io::Result<()> {
     log::info!("starting HTTP server");
 
     HttpServer::new(move || App::new().wrap(middleware::Logger::default()))
-        .bind(("127.0.0.1", 9291))?
+        .bind(("0.0.0.0", 9291))? // public facing
         .run()
         .await
 }
