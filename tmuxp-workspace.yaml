@@ -1,0 +1,11 @@
+session_name: glosy2
+windows:
+  - window_name: dev
+    layout: tiled
+    panes:
+      - shell_command:
+          - docker-compose up 
+      - shell_command:
+          - cd rnu && bun run build --watch
+      - shell_command:
+          - bacon run-long
