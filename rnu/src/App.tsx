@@ -18,7 +18,7 @@ function App() {
     <div className="app min-h-dvh flex flex-col items-center justify-center gap-8 p-8">
       <Badge variant="outline" className="text-base py-1 px-3">
         {/* Server time: {serverTime || "Loading..."} */} 
-        {serverTime} kfldsajflkdsaj
+        {serverTime} 123 123
       </Badge>
 
       <h1 className="text-4xl font-bold tracking-tight">Theme Showcase</h1>

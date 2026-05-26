@@ -4,7 +4,6 @@ import babel from '@rolldown/plugin-babel'
 import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -14,4 +13,9 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(__dirname, 'src') }
   },
+  build: {
+    watch: {
+      interval: 100, // Check for changes every 100ms
+    }
+  }
 })
