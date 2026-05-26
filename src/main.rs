@@ -1,4 +1,13 @@
-use actix_web::{App, HttpServer, middleware};
+use actix_web::{App, HttpResponse, HttpServer, get, middleware};
+use chrono::Utc;
+use serde_json;
+
+#[get("/datetime")]
+async fn datetime() -> HttpResponse {
+    HttpResponse::Ok().json(serde_json::json!({
+        "now": Utc::now().to_rfc3339()
+    }))
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -6,8 +15,16 @@ async fn main() -> std::io::Result<()> {
 
     log::info!("starting HTTP server");
 
-    HttpServer::new(move || App::new().wrap(middleware::Logger::default()))
-        .bind(("0.0.0.0", 9291))? // public facing
-        .run()
-        .await
+    HttpServer::new(move || {
+        App::new()
+            .wrap(middleware::Logger::default())
+            .service(datetime)
+    })
+    .bind(("0.0.0.0", 9291))? // public facing
+    .run()
+    .await
 }
+
+//
+// all routes start with /api at nginx
+//
