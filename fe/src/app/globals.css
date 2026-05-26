@@ -4,10 +4,19 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-display: swap;
+  font-family: 'Bpmf Huninn';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/bpmf-huninn-v6-latin-regular.woff2') format('woff2');
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  /* --font-sans: 'Bpmf Huninn', var(--font-sans); */
+  --font-sans: 'Bpmf Huninn', sans-serif;
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
