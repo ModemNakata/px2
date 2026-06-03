@@ -21,30 +21,32 @@ export default function HomePage() {
 
   // Check authentication on mount (non-blocking)
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch("/api/auth/check", {
-          method: "GET",
-          credentials: "include",
-        })
-        const data = await response.json()
-        setIsLoggedIn(data.authenticated)
-      } catch (error) {
-        console.error("Auth check failed:", error)
-        setIsLoggedIn(false)
-      }
-    }
+    const initialize = async () => {
+      const checkAuthPromise = (async () => {
+        try {
+          const response = await fetch("/api/auth/check", {
+            method: "GET",
+            credentials: "include",
+          })
+          const data = await response.json()
+          setIsLoggedIn(data.authenticated)
+        } catch (error) {
+          console.error("Auth check failed:", error)
+          setIsLoggedIn(false)
+        }
+      })()
 
-    const waitForFonts = async () => {
-      // Wait for custom fonts to load
-      if (document.fonts && document.fonts.ready) {
-        await document.fonts.ready
-      }
+      const waitForFontsPromise = (async () => {
+        if (document.fonts && document.fonts.ready) {
+          await document.fonts.ready
+        }
+      })()
+
+      await Promise.all([checkAuthPromise, waitForFontsPromise])
       setAuthChecked(true)
     }
 
-    checkAuth()
-    waitForFonts()
+    initialize()
   }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
