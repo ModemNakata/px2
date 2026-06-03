@@ -8,8 +8,8 @@ export default function NavigationProgress() {
   const searchParams = useSearchParams()
   const [visible, setVisible] = useState(false)
   const [progress, setProgress] = useState(0)
-  const intervalRef = useRef<ReturnType<typeof setInterval>>()
-  const hideTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isFirstRender = useRef(true)
 
   // Detect navigation completion via route change

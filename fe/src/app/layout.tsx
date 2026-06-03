@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Bpmf_Huninn } from "next/font/local";
+import { Suspense } from "react";
+import Bpmf_Huninn from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import CookieBanner from "@/components/cookie-banner";
@@ -36,7 +37,7 @@ export default function RootLayout({
       className={cn(bpmfHuninn.variable, "dark", "h-full", "antialiased", "font-sans")}
     >
       <body className="min-h-full flex flex-col">
-        <NavigationProgress />
+        <Suspense fallback={null}><NavigationProgress /></Suspense>
         <SplashScreen>{children}</SplashScreen>
         <CookieBanner />
       </body>
