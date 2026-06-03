@@ -1,5 +1,5 @@
 use actix_web::{App, HttpServer, middleware, web};
-use sea_orm::{Database, DatabaseConnection}:
+use sea_orm::{Database, DatabaseConnection};
 use std::env;
 
 mod auth;
@@ -14,6 +14,7 @@ async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     // tracing_subcriber-
 
+    dotenvy::dotenv().ok();
     let db_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set in .env file"); // must be set
 
     // ... must be set
