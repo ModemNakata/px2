@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import CookieBanner from "@/components/cookie-banner";
 import NavigationProgress from "@/components/navigation-progress";
+import SplashScreen from "@/components/splash-screen";
 
 const bpmfHuninn = Bpmf_Huninn({
   src: [
@@ -36,7 +37,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <NavigationProgress />
-        {children}
+        <SplashScreen>{children}</SplashScreen>
         <CookieBanner />
       </body>
     </html>
