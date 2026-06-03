@@ -1,74 +1,297 @@
 "use client"
 
+import { useState, useEffect } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useState } from "react"
-import { Settings, User, LogOut, ChevronDown } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertCircle, CheckCircle } from "lucide-react"
 
-export default function Home() {
-  const [position, setPosition] = useState("bottom")
+export default function HomePage() {
+  const [isLogin, setIsLogin] = useState(false)
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [passwordConfirm, setPasswordConfirm] = useState("")
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/check-auth", {
+          method: "GET",
+          credentials: "include",
+        })
+        const data = await response.json()
+        setIsLoggedIn(data.authenticated)
+      } catch (error) {
+        console.error("Auth check failed:", error)
+        setIsLoggedIn(false)
+      }
+    }
+
+    checkAuth()
+  }, [])
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setErrorMessage(null)
+    setSuccessMessage(null)
+    setIsLoading(true)
+
+    try {
+      const endpoint = isLogin ? "/api/login" : "/api/register"
+      const payload = isLogin
+        ? { username, password }
+        : { username, password, password_confirm: passwordConfirm }
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setErrorMessage(data.error || "An error occurred")
+      } else {
+        setSuccessMessage(
+          isLogin ? "Signed in successfully! Redirecting..." : "Account created successfully! Redirecting..."
+        )
+        setUsername("")
+        setPassword("")
+        setPasswordConfirm("")
+
+        // Redirect to profile after a short delay
+        setTimeout(() => {
+          window.location.href = "/profile"
+        }, 1500)
+      }
+    } catch (error) {
+      setErrorMessage("Network error. Please try again.")
+      console.error("Auth error:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+      })
+
+      if (response.ok) {
+        setIsLoggedIn(false)
+        window.location.href = "/"
+      }
+    } catch (error) {
+      console.error("Logout error:", error)
+    }
+  }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-12 p-12">
-      <h1 className="text-2xl font-semibold">shadcn/ui Demo</h1>
-
-      <section className="flex flex-col items-center gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">Buttons</h2>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button>Default</Button>
-          <Button variant="secondary">Secondary</Button>
-          <Button variant="outline">Outline</Button>
-          <Button variant="ghost">Ghost</Button>
-          <Button variant="destructive">Destructive</Button>
-          <Button variant="link">Link</Button>
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-black text-white">
+      {/* Hero Section - Left on Desktop, Top on Mobile */}
+      <div className="flex flex-col items-center justify-center p-6 md:p-12 order-1">
+        <div className="space-y-6 max-w-md">
+          <div>
+            <h2 className="text-4xl font-bold">
+              Welcome to <span className="text-pink-500">Glosy</span>
+            </h2>
+            <p className="text-lg text-gray-400 mt-4">
+              Privacy-focused platform for creators and their fans.
+            </p>
+            <p className="text-lg text-gray-400">Powered by crypto.</p>
+          </div>
         </div>
-      </section>
+      </div>
 
-      <section className="flex flex-col items-center gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">Dropdown Menu</h2>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              Open Menu <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem checked>
-              Show details
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>Show sidebar</DropdownMenuCheckboxItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel>Position</DropdownMenuLabel>
-            <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
-              <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User /> Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings /> Settings
-            </DropdownMenuItem>
-            <DropdownMenuItem variant="destructive">
-              <LogOut /> Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </section>
+      {/* Form Section - Right on Desktop, Bottom on Mobile */}
+      <div className="flex flex-col items-center justify-center p-6 md:p-12 order-2">
+        <div className="w-full max-w-md">
+          {isLoggedIn ? (
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">Welcome back!</h1>
+              </div>
+              <div className="space-y-3">
+                <Button asChild className="w-full" size="lg">
+                  <Link href="/profile">My Profile</Link>
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="w-full"
+                  size="lg"
+                  onClick={handleLogout}
+                  disabled={isLoading}
+                >
+                  Sign Out
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-2xl font-bold mb-2">{isLogin ? "Welcome Back" : "Join Glosy"}</h1>
+                <p className="text-gray-400">
+                  {isLogin ? "Sign in to your account" : "Create an account"}
+                </p>
+              </div>
+
+              {errorMessage && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+              )}
+
+              {successMessage && (
+                <Alert className="border-green-200 bg-green-50">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
+                </Alert>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="username" className="text-gray-300">Username</Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="Enter your username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    disabled={isLoading}
+                    autoComplete="on"
+                    className="bg-white/5 border-pink-500/20 text-white placeholder:text-gray-600"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-gray-300">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                    className="bg-white/5 border-pink-500/20 text-white placeholder:text-gray-600"
+                  />
+                </div>
+
+                {!isLogin && (
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password" className="text-gray-300">Confirm Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      placeholder="Confirm your password"
+                      value={passwordConfirm}
+                      onChange={(e) => setPasswordConfirm(e.target.value)}
+                      disabled={isLoading}
+                      className="bg-white/5 border-pink-500/20 text-white placeholder:text-gray-600"
+                    />
+                  </div>
+                )}
+
+                <Button 
+                  type="submit" 
+                  className="w-full bg-pink-500 hover:bg-pink-600 text-black font-bold" 
+                  size="lg" 
+                  disabled={isLoading}
+                >
+                  {isLoading
+                    ? "Processing..."
+                    : isLogin
+                      ? "Sign In"
+                      : "Create Account"}
+                </Button>
+              </form>
+
+              <div className="text-center text-sm">
+                <p className="text-gray-400">
+                  {isLogin ? "Don't have an account? " : "Already have an account? "}
+                  <button
+                    type="button"
+                    onClick={() => setIsLogin(!isLogin)}
+                    className="text-pink-500 hover:text-pink-400 hover:underline font-medium"
+                  >
+                    {isLogin ? "Sign up" : "Sign in"}
+                  </button>
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Information Content Section - Full Width Below */}
+      <div className="col-span-1 md:col-span-2 px-6 md:px-12 py-12 order-3">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-pink-500">Crypto-native & Privacy by design</h3>
+              <p className="text-gray-400 leading-relaxed">
+                Privacy-friendly platform. Minimal data retention. Just direct payments in the currency of the
+                internet. Crypto adoption is accelerating across the globe, and creators deserve a platform built
+                for that future, today.
+              </p>
+            </div>
+
+            <div className="space-y-2 md:text-right">
+              <h3 className="text-xl font-semibold text-pink-500">Real-time analytics</h3>
+              <p className="text-gray-400 leading-relaxed">
+                Deep insights with comprehensive statistics and analytics help you understand your audience and
+                optimize your content strategy.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-pink-500">Flexible monetization</h3>
+              <p className="text-gray-400 leading-relaxed">
+                Subscriptions, one-time purchases, commissions. You choose how to earn. Platform takes just 5%,
+                one of the lowest fees anywhere. Your audience, your terms, your money.
+              </p>
+            </div>
+
+            <div className="space-y-2 md:text-right">
+              <h3 className="text-xl font-semibold text-pink-500">Full customization</h3>
+              <p className="text-gray-400 leading-relaxed">
+                Personalize your creator page with custom styling, branding, and layouts, and use your own domain
+                for a professional, trusted presence.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="col-span-1 md:col-span-2 border-t border-gray-800 py-8 px-6 md:px-12 order-4">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-gray-500">© 2026 Glosy</p>
+          <div className="flex gap-6 text-sm">
+            <Link href="/privacy" className="text-gray-500 hover:text-pink-500">
+              Privacy
+            </Link>
+            <Link href="/terms" className="text-gray-500 hover:text-pink-500">
+              Terms
+            </Link>
+            <Link href="/contact" className="text-gray-500 hover:text-pink-500">
+              Contact
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
