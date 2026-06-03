@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,12 +16,19 @@ function sanitizeSubdomain(input: string): string {
     .replace(/^-+|-+$/g, "")
 }
 
+type SubdomainStatus = "idle" | "checking" | "available" | "taken"
+
+async function checkSubdomain(username: string): Promise<boolean> {
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+  const taken = ["admin", "root", "test", "demo", "api", "www", "mail", "support"]
+  return !taken.includes(username.toLowerCase())
+}
+
 export default function HomePage() {
   const [isLogin, setIsLogin] = useState(false)
   const [username, setUsername] = useState("")
-  const subdomainPreview = username.trim()
-    ? `${sanitizeSubdomain(username)}.hugs.xin`
-    : null
+  const [subdomainStatus, setSubdomainStatus] = useState<SubdomainStatus>("idle")
+  const subdomainTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -48,6 +55,33 @@ export default function HomePage() {
     }
     checkAuth()
   }, [])
+
+  // Subdomain availability check
+  useEffect(() => {
+    if (subdomainTimer.current) clearTimeout(subdomainTimer.current)
+
+    if (isLogin || !username.trim()) {
+      setSubdomainStatus("idle")
+      return
+    }
+
+    const sanitized = sanitizeSubdomain(username)
+    if (!sanitized) {
+      setSubdomainStatus("idle")
+      return
+    }
+
+    setSubdomainStatus("checking")
+
+    subdomainTimer.current = setTimeout(async () => {
+      const available = await checkSubdomain(sanitized)
+      setSubdomainStatus(available ? "available" : "taken")
+    }, 500)
+
+    return () => {
+      if (subdomainTimer.current) clearTimeout(subdomainTimer.current)
+    }
+  }, [username, isLogin])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -200,8 +234,8 @@ export default function HomePage() {
                     autoComplete="on"
                     className="bg-white/5 border-pink-500/20 text-white placeholder:text-gray-600"
                   />
-                  {!isLogin && subdomainPreview && (
-                    <p className="text-sm text-gray-500">{subdomainPreview}</p>
+                  {!isLogin && (
+                    <p className="text-sm text-gray-500 text-right">{sanitizeSubdomain(username) || ""}.hugs.xin</p>
                   )}
                 </div>
 
@@ -237,13 +271,22 @@ export default function HomePage() {
                   type="submit"
                   className="w-full bg-pink-500 hover:bg-pink-600 text-black font-bold"
                   size="lg"
-                  disabled={isLoading}
+                  disabled={isLoading || (!isLogin && subdomainStatus !== "available")}
                 >
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       {isLogin ? "Signing In..." : "Creating Account..."}
                     </>
+                  ) : !isLogin && subdomainStatus === "idle" ? (
+                    "Enter a username"
+                  ) : !isLogin && subdomainStatus === "checking" ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Checking...
+                    </>
+                  ) : !isLogin && subdomainStatus === "taken" ? (
+                    "Username not available"
                   ) : (
                     isLogin ? "Sign In" : "Create Account"
                   )}
