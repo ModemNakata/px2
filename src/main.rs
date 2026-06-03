@@ -29,5 +29,5 @@ async fn main() -> std::io::Result<()> {
 }
 
 //
-// all routes start with /api at nginx
+// all routes start with /API at nginx
 //
