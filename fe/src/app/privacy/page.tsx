@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 export const metadata = {
-  title: "Privacy Policy - Glosy",
+  title: "Privacy Policy - hugs.xin",
 }
 
 export default function PrivacyPage() {
@@ -18,7 +18,7 @@ export default function PrivacyPage() {
           <p className="text-sm text-gray-400">Last updated: May 2026</p>
 
           <p className="leading-relaxed text-gray-300">
-            Glosy is built on the belief that you deserve a platform that respects your privacy. This policy
+            hugs.xin is built on the belief that you deserve a platform that respects your privacy. This policy
             explains what little data we handle and how we handle it.
           </p>
 
@@ -28,7 +28,7 @@ export default function PrivacyPage() {
             <div className="space-y-3">
               <h3 className="text-lg font-semibold text-pink-500">Information You Provide</h3>
               <ul className="list-disc list-inside space-y-1 text-gray-400">
-                <li>Username and display name — your chosen identity on Glosy</li>
+                <li>Username and display name — your chosen identity on hugs.xin</li>
                 <li>Profile information — bio, avatar, and any details you add to your creator page</li>
                 <li>
                   Cryptocurrency address — stored only to enable the withdrawal system for creators
@@ -80,7 +80,7 @@ export default function PrivacyPage() {
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold">3. Payments</h2>
             <p className="text-gray-400">
-              Payments on Glosy are processed through a third-party cryptocurrency payment provider. Glosy does
+              Payments on hugs.xin are processed through a third-party cryptocurrency payment provider. hugs.xin does
               not custody user funds. A 5% platform fee is deducted at the time of transaction. The payment
               processor may have access to cryptocurrency wallet addresses involved in transactions. We encourage
               review of their privacy policy as well.
@@ -90,7 +90,7 @@ export default function PrivacyPage() {
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold">4. Content Storage</h2>
             <p className="text-gray-400">
-              Creator content is stored securely and served via time-limited URLs. Glosy does not claim
+              Creator content is stored securely and served via time-limited URLs. hugs.xin does not claim
               ownership of your content. You retain all rights. We access stored content only as necessary to
               operate the service.
             </p>
@@ -133,7 +133,7 @@ export default function PrivacyPage() {
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold">7. Cookies</h2>
             <p className="text-gray-400">
-              Glosy uses only essential cookies required for the platform to function — such as maintaining your
+              hugs.xin uses only essential cookies required for the platform to function — such as maintaining your
               session. No tracking cookies. No third-party cookies. You can block all cookies in your browser,
               but some platform features may not work.
             </p>

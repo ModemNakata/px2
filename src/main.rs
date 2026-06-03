@@ -2,6 +2,8 @@ use actix_web::{App, HttpResponse, HttpServer, get, middleware};
 use chrono::Utc;
 use serde_json;
 
+mod auth;
+
 #[get("/datetime")]
 async fn datetime() -> HttpResponse {
     HttpResponse::Ok().json(serde_json::json!({
@@ -19,6 +21,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(middleware::Logger::default())
             .service(datetime)
+            .configure(auth::configure_auth_routes)
     })
     .bind(("0.0.0.0", 9291))? // public facing
     .run()

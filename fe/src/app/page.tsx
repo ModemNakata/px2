@@ -23,7 +23,7 @@ export default function HomePage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("/api/check-auth", {
+        const response = await fetch("/api/auth/check", {
           method: "GET",
           credentials: "include",
         })
@@ -45,7 +45,7 @@ export default function HomePage() {
     setIsLoading(true)
 
     try {
-      const endpoint = isLogin ? "/api/login" : "/api/register"
+      const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register"
       const payload = isLogin
         ? { username, password }
         : { username, password, password_confirm: passwordConfirm }
@@ -84,7 +84,7 @@ export default function HomePage() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("/api/logout", {
+      const response = await fetch("/api/auth/logout", {
         method: "POST",
         credentials: "include",
       })
@@ -105,7 +105,7 @@ export default function HomePage() {
         <div className="space-y-6 max-w-md">
           <div>
             <h2 className="text-4xl font-bold">
-              Welcome to <span className="text-pink-500">Glosy</span>
+              Welcome to <span className="text-pink-500">hugs.xin</span>
             </h2>
             <p className="text-lg text-gray-400 mt-4">
               Privacy-focused platform for creators and their fans.
@@ -141,7 +141,7 @@ export default function HomePage() {
           ) : (
             <div className="space-y-6">
               <div>
-                <h1 className="text-2xl font-bold mb-2">{isLogin ? "Welcome Back" : "Join Glosy"}</h1>
+                <h1 className="text-2xl font-bold mb-2">{isLogin ? "Welcome Back" : "Join hugs.xin"}</h1>
                 <p className="text-gray-400">
                   {isLogin ? "Sign in to your account" : "Create an account"}
                 </p>
@@ -278,7 +278,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="col-span-1 md:col-span-2 border-t border-gray-800 py-8 px-6 md:px-12 order-4">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-500">© 2026 Glosy</p>
+          <p className="text-sm text-gray-500">© 2026 hugs.xin</p>
           <div className="flex gap-6 text-sm">
             <Link href="/privacy" className="text-gray-500 hover:text-pink-500">
               Privacy

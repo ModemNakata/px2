@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 export const metadata = {
-  title: "Contact - Glosy",
+  title: "Contact - hugs.xin",
 }
 
 export default function ContactPage() {
