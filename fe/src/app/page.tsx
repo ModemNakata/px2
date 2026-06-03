@@ -8,9 +8,20 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react"
 
+function sanitizeSubdomain(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "")
+}
+
 export default function HomePage() {
   const [isLogin, setIsLogin] = useState(false)
   const [username, setUsername] = useState("")
+  const subdomainPreview = username.trim()
+    ? `${sanitizeSubdomain(username)}.hugs.xin`
+    : null
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -189,6 +200,9 @@ export default function HomePage() {
                     autoComplete="on"
                     className="bg-white/5 border-pink-500/20 text-white placeholder:text-gray-600"
                   />
+                  {!isLogin && subdomainPreview && (
+                    <p className="text-sm text-gray-500">{subdomainPreview}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
