@@ -122,7 +122,7 @@ export default function HomePage() {
             to { transform: rotate(360deg); }
           }
           .custom-spinner {
-            animation: spin 0.8s linear infinite;
+            animation: spin 0.3s linear infinite;
           }
         `}</style>
         <div className="relative">
