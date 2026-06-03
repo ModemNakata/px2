@@ -3,6 +3,7 @@ import { Bpmf_Huninn } from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import CookieBanner from "@/components/cookie-banner";
+import NavigationProgress from "@/components/navigation-progress";
 
 const bpmfHuninn = Bpmf_Huninn({
   src: [
@@ -34,6 +35,7 @@ export default function RootLayout({
       className={cn(bpmfHuninn.variable, "dark", "h-full", "antialiased", "font-sans")}
     >
       <body className="min-h-full flex flex-col">
+        <NavigationProgress />
         {children}
         <CookieBanner />
       </body>

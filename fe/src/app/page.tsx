@@ -18,35 +18,36 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
+  const [fontsLoaded, setFontsLoaded] = useState(false)
 
-  // Check authentication on mount (non-blocking)
+  // Splash screen — only waits for fonts
   useEffect(() => {
-    const initialize = async () => {
-      const checkAuthPromise = (async () => {
-        try {
-          const response = await fetch("/api/auth/check", {
-            method: "GET",
-            credentials: "include",
-          })
-          const data = await response.json()
-          setIsLoggedIn(data.authenticated)
-        } catch (error) {
-          console.error("Auth check failed:", error)
-          setIsLoggedIn(false)
-        }
-      })()
+    const waitForFonts = async () => {
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready
+      }
+      setFontsLoaded(true)
+    }
+    waitForFonts()
+  }, [])
 
-      const waitForFontsPromise = (async () => {
-        if (document.fonts && document.fonts.ready) {
-          await document.fonts.ready
-        }
-      })()
-
-      await Promise.all([checkAuthPromise, waitForFontsPromise])
+  // Auth check — runs independently, doesn't block the page
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/auth/check", {
+          method: "GET",
+          credentials: "include",
+        })
+        const data = await response.json()
+        setIsLoggedIn(data.authenticated)
+      } catch (error) {
+        console.error("Auth check failed:", error)
+        setIsLoggedIn(false)
+      }
       setAuthChecked(true)
     }
-
-    initialize()
+    checkAuth()
   }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -103,7 +104,6 @@ export default function HomePage() {
 
       if (response.ok) {
         setIsLoggedIn(false)
-        setAuthChecked(false)
         setTimeout(() => {
           window.location.reload()
         }, 500)
@@ -114,8 +114,8 @@ export default function HomePage() {
     }
   }
 
-  // Show loading state while checking auth to prevent flicker
-  if (!authChecked) {
+  // Splash screen — shown only during essential app initialization
+  if (!fontsLoaded) {
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
         <style>{`
@@ -162,8 +162,12 @@ export default function HomePage() {
 
       {/* Form Section - Right on Desktop, Bottom on Mobile */}
       <div className="flex flex-col items-center justify-center p-6 md:p-12 order-2">
-        <div className="w-full max-w-md">
-          {isLoggedIn ? (
+        <div className="w-full max-w-md min-h-[420px]">
+          {!authChecked ? (
+            <div className="flex items-center justify-center min-h-[420px]">
+              <Loader2 className="h-8 w-8 animate-spin text-pink-500" />
+            </div>
+          ) : isLoggedIn ? (
             <div className="space-y-6">
               <div>
                 <h1 className="text-3xl font-bold mb-2">Welcome back!</h1>
