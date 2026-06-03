@@ -117,7 +117,7 @@ export default function HomePage() {
   // Show loading state while checking auth to prevent flicker
   if (!authChecked) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
         <style>{`
           @keyframes spin {
             from { transform: rotate(0deg); }

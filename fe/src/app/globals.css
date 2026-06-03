@@ -141,3 +141,12 @@
     @apply font-sans;
   }
 }
+
+@keyframes cookie-banner-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
