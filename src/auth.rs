@@ -35,7 +35,7 @@ pub async fn check_auth() -> HttpResponse {
 
     // Mock: User is not authenticated
     HttpResponse::Ok().json(AuthCheckResponse {
-        authenticated: true,
+        authenticated: false,
     })
 }
 
