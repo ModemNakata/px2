@@ -1,3 +1,4 @@
+use crate::entity::prelude::*;
 use actix_web::{HttpResponse, get, post, web};
 use serde::{Deserialize, Serialize};
 use tokio::time::{Duration, sleep};

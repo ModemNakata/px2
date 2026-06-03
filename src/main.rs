@@ -4,6 +4,8 @@ use std::env;
 
 mod auth;
 
+pub mod entity;
+
 #[derive(Debug, Clone)]
 struct AppState {
     conn: DatabaseConnection,
