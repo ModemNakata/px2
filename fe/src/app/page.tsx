@@ -19,9 +19,9 @@ function sanitizeSubdomain(input: string): string {
 type SubdomainStatus = "idle" | "checking" | "available" | "taken"
 
 async function checkSubdomain(username: string): Promise<boolean> {
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-  const taken = ["admin", "root", "test", "demo", "api", "www", "mail", "support"]
-  return !taken.includes(username.toLowerCase())
+  const res = await fetch(`/api/auth/check-username?username=${encodeURIComponent(username)}`)
+  const data = await res.json()
+  return data.available
 }
 
 export default function HomePage() {
