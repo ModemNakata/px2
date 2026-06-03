@@ -1,5 +1,6 @@
 use actix_web::{web, HttpResponse, get, post};
 use serde::{Deserialize, Serialize};
+use tokio::time::{sleep, Duration};
 
 #[derive(Deserialize)]
 pub struct RegisterRequest {
@@ -29,6 +30,9 @@ pub struct AuthResponse {
 /// GET /check - Check if user is authenticated
 #[get("/check")]
 pub async fn check_auth() -> HttpResponse {
+    // Add 1 second delay to simulate network latency
+    sleep(Duration::from_secs(1)).await;
+    
     // Mock: User is not authenticated
     HttpResponse::Ok().json(AuthCheckResponse {
         authenticated: false,
@@ -38,6 +42,9 @@ pub async fn check_auth() -> HttpResponse {
 /// POST /register - Register a new user
 #[post("/register")]
 pub async fn register(req: web::Json<RegisterRequest>) -> HttpResponse {
+    // Add 1 second delay to simulate network latency
+    sleep(Duration::from_secs(1)).await;
+    
     // Mock implementation
     if req.username.is_empty() || req.password.is_empty() {
         return HttpResponse::BadRequest().json(AuthResponse {
@@ -74,6 +81,9 @@ pub async fn register(req: web::Json<RegisterRequest>) -> HttpResponse {
 /// POST /login - Login user
 #[post("/login")]
 pub async fn login(req: web::Json<LoginRequest>) -> HttpResponse {
+    // Add 1 second delay to simulate network latency
+    sleep(Duration::from_secs(1)).await;
+    
     // Mock implementation
     if req.username.is_empty() || req.password.is_empty() {
         return HttpResponse::BadRequest().json(AuthResponse {
@@ -94,6 +104,9 @@ pub async fn login(req: web::Json<LoginRequest>) -> HttpResponse {
 /// POST /logout - Logout user
 #[post("/logout")]
 pub async fn logout() -> HttpResponse {
+    // Add 1 second delay to simulate network latency
+    sleep(Duration::from_secs(1)).await;
+    
     HttpResponse::Ok().json(AuthResponse {
         success: true,
         message: Some("Logged out successfully".to_string()),

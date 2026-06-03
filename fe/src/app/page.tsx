@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, CheckCircle } from "lucide-react"
+import { AlertCircle, CheckCircle, Loader2 } from "lucide-react"
 
 export default function HomePage() {
   const [isLogin, setIsLogin] = useState(false)
@@ -18,8 +17,9 @@ export default function HomePage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false)
 
-  // Check authentication on mount
+  // Check authentication on mount (non-blocking)
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -32,6 +32,8 @@ export default function HomePage() {
       } catch (error) {
         console.error("Auth check failed:", error)
         setIsLoggedIn(false)
+      } finally {
+        setAuthChecked(true)
       }
     }
 
@@ -61,6 +63,7 @@ export default function HomePage() {
 
       if (!response.ok) {
         setErrorMessage(data.error || "An error occurred")
+        setIsLoading(false)
       } else {
         setSuccessMessage(
           isLogin ? "Signed in successfully! Redirecting..." : "Account created successfully! Redirecting..."
@@ -69,7 +72,7 @@ export default function HomePage() {
         setPassword("")
         setPasswordConfirm("")
 
-        // Redirect to profile after a short delay
+        // Redirect to profile after success message is shown
         setTimeout(() => {
           window.location.href = "/profile"
         }, 1500)
@@ -77,12 +80,12 @@ export default function HomePage() {
     } catch (error) {
       setErrorMessage("Network error. Please try again.")
       console.error("Auth error:", error)
-    } finally {
       setIsLoading(false)
     }
   }
 
   const handleLogout = async () => {
+    setIsLoading(true)
     try {
       const response = await fetch("/api/auth/logout", {
         method: "POST",
@@ -91,11 +94,27 @@ export default function HomePage() {
 
       if (response.ok) {
         setIsLoggedIn(false)
-        window.location.href = "/"
+        setAuthChecked(false)
+        setTimeout(() => {
+          window.location.reload()
+        }, 500)
       }
     } catch (error) {
       console.error("Logout error:", error)
+      setIsLoading(false)
     }
+  }
+
+  // Show loading state while checking auth to prevent flicker
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-pink-500" />
+          <p className="text-gray-400">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -124,17 +143,24 @@ export default function HomePage() {
                 <h1 className="text-3xl font-bold mb-2">Welcome back!</h1>
               </div>
               <div className="space-y-3">
-                <Button asChild className="w-full" size="lg">
+                <Button asChild className="w-full bg-pink-500 hover:bg-pink-600 text-black font-bold" size="lg">
                   <Link href="/profile">My Profile</Link>
                 </Button>
                 <Button
-                  variant="destructive"
                   className="w-full"
                   size="lg"
                   onClick={handleLogout}
                   disabled={isLoading}
+                  variant="outline"
                 >
-                  Sign Out
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing out...
+                    </>
+                  ) : (
+                    "Sign Out"
+                  )}
                 </Button>
               </div>
             </div>
@@ -155,9 +181,9 @@ export default function HomePage() {
               )}
 
               {successMessage && (
-                <Alert className="border-green-200 bg-green-50">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
+                <Alert className="border-green-500/50 bg-green-500/10">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <AlertDescription className="text-green-400">{successMessage}</AlertDescription>
                 </Alert>
               )}
 
@@ -204,17 +230,20 @@ export default function HomePage() {
                   </div>
                 )}
 
-                <Button 
-                  type="submit" 
-                  className="w-full bg-pink-500 hover:bg-pink-600 text-black font-bold" 
-                  size="lg" 
+                <Button
+                  type="submit"
+                  className="w-full bg-pink-500 hover:bg-pink-600 text-black font-bold"
+                  size="lg"
                   disabled={isLoading}
                 >
-                  {isLoading
-                    ? "Processing..."
-                    : isLogin
-                      ? "Sign In"
-                      : "Create Account"}
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {isLogin ? "Signing In..." : "Creating Account..."}
+                    </>
+                  ) : (
+                    isLogin ? "Sign In" : "Create Account"
+                  )}
                 </Button>
               </form>
 
@@ -223,8 +252,13 @@ export default function HomePage() {
                   {isLogin ? "Don't have an account? " : "Already have an account? "}
                   <button
                     type="button"
-                    onClick={() => setIsLogin(!isLogin)}
+                    onClick={() => {
+                      setIsLogin(!isLogin)
+                      setErrorMessage(null)
+                      setSuccessMessage(null)
+                    }}
                     className="text-pink-500 hover:text-pink-400 hover:underline font-medium"
+                    disabled={isLoading}
                   >
                     {isLogin ? "Sign up" : "Sign in"}
                   </button>
