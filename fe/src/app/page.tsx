@@ -32,12 +32,19 @@ export default function HomePage() {
       } catch (error) {
         console.error("Auth check failed:", error)
         setIsLoggedIn(false)
-      } finally {
-        setAuthChecked(true)
       }
     }
 
+    const waitForFonts = async () => {
+      // Wait for custom fonts to load
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready
+      }
+      setAuthChecked(true)
+    }
+
     checkAuth()
+    waitForFonts()
   }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

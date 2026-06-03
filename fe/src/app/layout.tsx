@@ -1,6 +1,18 @@
 import type { Metadata } from "next";
+import { Bpmf_Huninn } from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+
+const bpmfHuninn = Bpmf_Huninn({
+  src: [
+    {
+      path: "../../public/fonts/bpmf-huninn-v6-latin-regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+  ],
+  variable: "--font-bpmf-huninn",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,7 +30,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("dark", "h-full", "antialiased", "font-sans")}
+      className={cn(bpmfHuninn.variable, "dark", "h-full", "antialiased", "font-sans")}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
