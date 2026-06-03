@@ -211,7 +211,7 @@ export default function HomePage() {
                 </Alert>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4 min-h-[280px]">
                 <div className="space-y-2">
                   <Label htmlFor="username" className="text-gray-300">Username</Label>
                   <Input

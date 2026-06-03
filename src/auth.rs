@@ -1,6 +1,6 @@
-use actix_web::{web, HttpResponse, get, post};
+use actix_web::{HttpResponse, get, post, web};
 use serde::{Deserialize, Serialize};
-use tokio::time::{sleep, Duration};
+use tokio::time::{Duration, sleep};
 
 #[derive(Deserialize)]
 pub struct RegisterRequest {
@@ -32,10 +32,10 @@ pub struct AuthResponse {
 pub async fn check_auth() -> HttpResponse {
     // Add 1 second delay to simulate network latency
     sleep(Duration::from_secs(1)).await;
-    
+
     // Mock: User is not authenticated
     HttpResponse::Ok().json(AuthCheckResponse {
-        authenticated: false,
+        authenticated: true,
     })
 }
 
@@ -44,7 +44,7 @@ pub async fn check_auth() -> HttpResponse {
 pub async fn register(req: web::Json<RegisterRequest>) -> HttpResponse {
     // Add 1 second delay to simulate network latency
     sleep(Duration::from_secs(1)).await;
-    
+
     // Mock implementation
     if req.username.is_empty() || req.password.is_empty() {
         return HttpResponse::BadRequest().json(AuthResponse {
@@ -83,7 +83,7 @@ pub async fn register(req: web::Json<RegisterRequest>) -> HttpResponse {
 pub async fn login(req: web::Json<LoginRequest>) -> HttpResponse {
     // Add 1 second delay to simulate network latency
     sleep(Duration::from_secs(1)).await;
-    
+
     // Mock implementation
     if req.username.is_empty() || req.password.is_empty() {
         return HttpResponse::BadRequest().json(AuthResponse {
@@ -106,7 +106,7 @@ pub async fn login(req: web::Json<LoginRequest>) -> HttpResponse {
 pub async fn logout() -> HttpResponse {
     // Add 1 second delay to simulate network latency
     sleep(Duration::from_secs(1)).await;
-    
+
     HttpResponse::Ok().json(AuthResponse {
         success: true,
         message: Some("Logged out successfully".to_string()),
@@ -121,7 +121,6 @@ pub fn configure_auth_routes(cfg: &mut web::ServiceConfig) {
             .service(check_auth)
             .service(register)
             .service(login)
-            .service(logout)
+            .service(logout),
     );
 }
-
