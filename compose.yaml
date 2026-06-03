@@ -6,7 +6,6 @@ services:
     image: nginx:latest
     volumes:
      - ./nginx:/etc/nginx
-     - ./rnu/dist:/usr/share/nginx/html
     ports:
      - "80:80"
      - "443:443"
