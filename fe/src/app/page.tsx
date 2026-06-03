@@ -207,20 +207,6 @@ export default function HomePage() {
                 </p>
               </div>
 
-              {errorMessage && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{errorMessage}</AlertDescription>
-                </Alert>
-              )}
-
-              {successMessage && (
-                <Alert className="border-green-500/50 bg-green-500/10">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <AlertDescription className="text-green-400">{successMessage}</AlertDescription>
-                </Alert>
-              )}
-
               <form onSubmit={handleSubmit} className="space-y-4 min-h-[280px]">
                 <div className="space-y-2">
                   <Label htmlFor="username" className="text-gray-300">Username</Label>
@@ -234,9 +220,7 @@ export default function HomePage() {
                     autoComplete="on"
                     className="bg-white/5 border-pink-500/20 text-white placeholder:text-gray-600"
                   />
-                  {!isLogin && (
-                    <p className="text-sm text-gray-500 text-right">{sanitizeSubdomain(username) || ""}.hugs.xin</p>
-                  )}
+                  <p className={`text-sm text-gray-500 text-right ${isLogin ? "invisible" : ""}`}>{sanitizeSubdomain(username) || ""}.hugs.xin</p>
                 </div>
 
                 <div className="space-y-2">
@@ -252,20 +236,18 @@ export default function HomePage() {
                   />
                 </div>
 
-                {!isLogin && (
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password" className="text-gray-300">Confirm Password</Label>
-                    <Input
-                      id="confirm-password"
-                      type="password"
-                      placeholder="Confirm your password"
-                      value={passwordConfirm}
-                      onChange={(e) => setPasswordConfirm(e.target.value)}
-                      disabled={isLoading}
-                      className="bg-white/5 border-pink-500/20 text-white placeholder:text-gray-600"
-                    />
-                  </div>
-                )}
+                <div className={`space-y-2 ${isLogin ? "invisible" : ""}`}>
+                  <Label htmlFor="confirm-password" className="text-gray-300">Confirm Password</Label>
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={passwordConfirm}
+                    onChange={(e) => setPasswordConfirm(e.target.value)}
+                    disabled={isLoading || isLogin}
+                    className="bg-white/5 border-pink-500/20 text-white placeholder:text-gray-600"
+                  />
+                </div>
 
                 <Button
                   type="submit"
@@ -290,8 +272,24 @@ export default function HomePage() {
                   ) : (
                     isLogin ? "Sign In" : "Create Account"
                   )}
-                </Button>
-              </form>
+                  </Button>
+
+                  <div className="min-h-[4rem]">
+                    {errorMessage && (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>{errorMessage}</AlertDescription>
+                      </Alert>
+                    )}
+
+                    {successMessage && (
+                      <Alert className="border-green-500/50 bg-green-500/10">
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                        <AlertDescription className="text-green-400">{successMessage}</AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
+                </form>
 
               <div className="text-center text-sm">
                 <p className="text-gray-400">
