@@ -1,6 +1,6 @@
+use crate::AppState;
 use crate::entity::prelude::*;
 use crate::entity::users;
-use crate::AppState;
 use actix_web::{HttpResponse, get, post, web};
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
@@ -10,7 +10,13 @@ fn sanitize_subdomain(input: &str) -> String {
     input
         .to_lowercase()
         .chars()
-        .map(|c| if c.is_ascii_alphanumeric() || c == '-' { c } else { '-' })
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '-' {
+                c
+            } else {
+                '-'
+            }
+        })
         .collect::<String>()
         .chars()
         .fold((String::new(), false), |(mut acc, prev_hyphen), c| {
@@ -70,7 +76,9 @@ pub async fn check_username(
     }
 
     // Hardcoded taken list
-    let taken = ["admin", "root", "test", "demo", "api", "www", "mail", "support"];
+    let taken = [
+        "admin", "root", "test", "demo", "api", "www", "mail", "support",
+    ];
     if taken.contains(&sanitized.as_str()) {
         return HttpResponse::Ok().json(CheckUsernameResponse { available: false });
     }

@@ -166,17 +166,17 @@ export default function HomePage() {
 
       {/* Form Section - Right on Desktop, Bottom on Mobile */}
       <div className="flex flex-col items-center justify-center p-6 md:p-12 order-2">
-        <div className="w-full max-w-md min-h-[420px]">
+        <div className="w-full max-w-md min-h-[540px]">
           {!authChecked ? (
-            <div className="flex items-center justify-center min-h-[420px]">
+            <div className="flex items-center justify-center min-h-[540px]">
               <Loader2 className="h-8 w-8 animate-spin text-pink-500" />
             </div>
           ) : isLoggedIn ? (
-            <div className="space-y-6">
+            <div className="flex flex-col justify-center h-full gap-6">
               <div>
                 <h1 className="text-3xl font-bold mb-2">Welcome back!</h1>
               </div>
-              <div className="space-y-3">
+              <div className="flex flex-col justify-center gap-3">
                 <Button asChild className="w-full bg-pink-500 hover:bg-pink-600 text-black font-bold" size="lg">
                   <Link href="/profile">My Profile</Link>
                 </Button>
